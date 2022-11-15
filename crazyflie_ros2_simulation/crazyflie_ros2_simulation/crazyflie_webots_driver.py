@@ -1,19 +1,17 @@
+import sys
+from math import cos, degrees, pi, radians, sin
+
 import rclpy
+import tf_transformations
+from geometry_msgs.msg import TransformStamped, Twist
+from nav_msgs.msg import Odometry
 from rclpy.node import Node
 from rclpy.time import Time
-
-from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
-from nav_msgs.msg import Odometry
-
-from math import cos, sin, degrees, radians, pi
-import sys
-import tf_transformations
 from tf2_ros import TransformBroadcaster
-from geometry_msgs.msg import TransformStamped
 
 # Change this path to your crazyflie-firmware folder
-sys.path.append('/home/knmcguire/Development/bitcraze/c/crazyflie-firmware')
+sys.path.append('/home/drewlab/crazyflie-firmware')
 import cffirmware
 
 
@@ -54,8 +52,8 @@ class CrazyflieWebotsDriver:
         self.range_right = self.robot.getDevice("range_right")
         self.range_right.enable(timestep)
 
-        #self.lidar = self.robot.getDevice("lidar")
-        #self.lidar.enable(timestep)
+        # self.lidar = self.robot.getDevice("lidar")
+        # self.lidar.enable(timestep)
 
         ## Intialize Variables
         self.past_x_global = 0
@@ -72,7 +70,7 @@ class CrazyflieWebotsDriver:
 
         rclpy.init(args=None)
         self.node = rclpy.create_node('crazyflie_webots_driver')
-        self.node.create_subscription(Twist, 'cmd_vel', self.cmd_vel_callback, 1)
+        self.node.create_subscription(Twist, 'cmd_vel', self.cmd_vel_callback, 1) # this is where we need to edit subscription for commanded velocity/position
         self.laser_publisher = self.node.create_publisher(LaserScan, 'scan', 10)
         self.odom_publisher = self.node.create_publisher(Odometry, 'odom', 10)
 
@@ -130,7 +128,8 @@ class CrazyflieWebotsDriver:
         pitch_rate = self.gyro.getValues()[1]
         yaw_rate = self.gyro.getValues()[2]
         x_global = self.gps.getValues()[0]- self.first_x_global
-        vx_global = (x_global - self.past_x_global)/dt
+        vx_global = (x_global - self.past_x_global)
+        # msg.range_min = self.lidar.getMinRange() /dt
         y_global = self.gps.getValues()[1] - self.first_y_global
         vy_global = (y_global - self.past_y_global)/dt
         z_global = self.gps.getValues()[2]
@@ -155,7 +154,7 @@ class CrazyflieWebotsDriver:
             msg.range_min = self.lidar.getMinRange() 
             msg.range_max = self.lidar.getMaxRange()
             msg.ranges = ranges
-           # self.laser_publisher.publish(msg)
+            self.laser_publisher.publish(msg)
             ##print(self.lidar.getFov())
             #print(ranges)'''
 

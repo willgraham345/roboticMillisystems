@@ -5,12 +5,13 @@ from launch_ros.actions import Node
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.webots_launcher import Ros2SupervisorLauncher
 
 
 def generate_launch_description():
     package_dir = get_package_share_directory('crazyflie_ros2_simulation')
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'crazyflie.urdf')).read_text()
-
+    ros2_supervisor = Ros2SupervisorLauncher()
     webots = WebotsLauncher(
         world=os.path.join(package_dir, 'worlds', 'crazyflie_apartment.wbt')
     )
@@ -19,6 +20,7 @@ def generate_launch_description():
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
+        additional_env={'WEBOTS_CONTROLLER_URL': 'Crazyflie'},
         parameters=[
             {'robot_description': robot_description,
              'use_sim_time': True,
@@ -39,6 +41,7 @@ def generate_launch_description():
         webots,
         my_robot_driver,
         robot_state_publisher,
+        ros2_supervisor,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,
