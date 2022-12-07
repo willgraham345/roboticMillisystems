@@ -6,7 +6,6 @@
         "limitSymbolsToIncludedHeaders": false
       },
       "includePath": [
-        "/home/will/cf_webots/install/crazyflie_ros2_interfaces/include/**",
         "/opt/ros/galactic/include/**",
         "/usr/include/**"
       ],

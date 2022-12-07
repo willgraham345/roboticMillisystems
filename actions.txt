@@ -1,9 +1,0 @@
-/backup
-/compute_path_through_poses
-/compute_path_to_pose
-/follow_path
-/follow_waypoints
-/navigate_through_poses
-/navigate_to_pose
-/spin
-/wait
